@@ -17,6 +17,7 @@ public class CityDialogFragment extends DialogFragment {
     interface CityDialogListener {
         void updateCity(City city, String title, String year);
         void addCity(City city);
+        void deleteCity(City city);
     }
     private CityDialogListener listener;
 
@@ -61,6 +62,7 @@ public class CityDialogFragment extends DialogFragment {
             city = null;}
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        /*without delete button
         return builder
                 .setView(view)
                 .setTitle("City Details")
@@ -74,6 +76,26 @@ public class CityDialogFragment extends DialogFragment {
                         listener.addCity(new City(title, year));
                     }
                 })
-                .create();
+                .create();*/
+        builder.setView(view)
+                        .setTitle("City Details")
+                        .setPositiveButton("Continue", (dialog, which) -> {
+                            String title = editMovieName.getText().toString();
+                            String year = editMovieYear.getText().toString();
+                            if (Objects.equals(tag, "City Details")) {
+                                listener.updateCity(city, title, year);
+                            } else {
+                                listener.addCity(new City(title, year));
+                            }
+                        });
+        // delete button when editing existing city
+        if (Objects.equals(tag, "City Details") && city != null) {
+            builder.setNegativeButton("Delete", (dialog, which) -> {
+                listener.deleteCity(city);
+            });
+        } else {
+            builder.setNegativeButton("Cancel", null);
+        }
+        return builder.create();
     }
 }
